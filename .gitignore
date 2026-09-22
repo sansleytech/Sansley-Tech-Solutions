@@ -1,0 +1,11 @@
+# Carpetas que no son código fuente (mockups, entregas anteriores, etc.)
+Claude outputs/
+coverage/
+
+# Variables de entorno (nunca deben subirse)
+.env
+.env.local
+
+# Por si acaso queda algo suelto fuera de backend/ o frontend/
+node_modules/
+dist/
