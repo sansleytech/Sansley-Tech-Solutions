@@ -6,12 +6,13 @@ import Aparecer from "../components/Aparecer.jsx";
 import useDatos from "../hooks/useDatos.js";
 import { urlImagen } from "../api.js";
 
-// Cuántas tarjetas caben por fila: 1 en celular, 2 en tablet y 3 en computador.
-// Los números 24 y 64 son la suma de los espacios entre tarjetas (en píxeles).
+// Cuántas tarjetas caben por fila: 1 en celular, 2 en tablet, 3 en computador y 4 en pantallas grandes.
+// Los números 24, 64 y 72 son la suma de los espacios entre tarjetas (en píxeles).
 const anchoTarjeta = {
     xs: "100%",
     sm: "calc((100% - 24px) / 2)",
     md: "calc((100% - 64px) / 3)",
+    lg: "calc((100% - 72px) / 4)",
 };
 
 export default function Equipo() {
@@ -41,8 +42,8 @@ export default function Equipo() {
                 }}
             />
 
-            <Container 
-                maxWidth="lg" 
+            <Container
+                maxWidth="lg"
                 sx={{ position: "relative", zIndex: 1 }}>
                 <EncabezadoSeccion
                     centrado
@@ -57,7 +58,7 @@ export default function Equipo() {
                     </Typography>
                 )}
 
-                {/* Filas de hasta 3 tarjetas. Las que sobran pasan a la fila de abajo y quedan centradas */}
+                {/* Filas de hasta 3 tarjetas (4 en pantallas grandes). Las que sobran pasan a la fila de abajo y quedan centradas */}
                 <Box
                     sx={{
                         mt: { xs: 5, md: 7 },
@@ -72,13 +73,13 @@ export default function Equipo() {
                         [0, 1, 2].map((i) => (
                             <Box
                                 key={i}
-                                sx={{ flex: "0 0 auto", width: anchoTarjeta, maxWidth: 440 }}
+                                sx={{ flex: "0 0 auto", width: anchoTarjeta, maxWidth: 340 }}
                             >
                                 <Skeleton
                                     variant="rounded"
                                     animation="wave"
                                     sx={{
-                                        height: { xs: 560, md: 660 },
+                                        height: { xs: 440, md: 500 },
                                         borderRadius: "16px",
                                     }}
                                 />
@@ -91,7 +92,7 @@ export default function Equipo() {
                             sx={{
                                 flex: "0 0 auto",
                                 width: anchoTarjeta,
-                                maxWidth: 440,
+                                maxWidth: 340,
                             }}
                         >
                             <TarjetaMiembro
