@@ -1,143 +1,189 @@
-import { Box, Button, Container, Skeleton, Typography } from "@mui/material";
-import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
-import EncabezadoSeccion from "../components/EncabezadoSeccion.jsx";
-import TarjetaMiembro from "../components/TarjetaMiembro.jsx";
-import Aparecer from "../components/Aparecer.jsx";
-import useDatos from "../hooks/useDatos.js";
-import { urlImagen } from "../api.js";
+import { useState } from "react";
+import { Box, Typography } from "@mui/material";
+import Aparecer from "./Aparecer.jsx";
 
+const fuenteTitulos = '"Poppins", "Helvetica", "Arial", sans-serif';
 
-const anchoTarjeta = {
-    xs: "100%",
-    sm: "calc((100% - 24px) / 2)",
-    md: "calc((100% - 64px) / 3)",
-    lg: "calc((100% - 72px) / 4)",
-};
+// Saca las iniciales del nombre para cuando la persona no tiene foto
+function iniciales(nombre = "") {
+    return nombre
+        .split(" ")
+        .filter(Boolean)
+        .slice(0, 2)
+        .map((palabra) => palabra[0].toUpperCase())
+        .join("");
+}
 
-export default function Equipo() {
-    const { datos: equipo, cargando, error } = useDatos("/equipo");
-
+// Espacio que se muestra cuando no hay foto (o si la foto falla al cargar)
+function SinFoto({ nombre }) {
     return (
         <Box
-            id="equipo"
             sx={{
-                position: "relative",
-                overflow: "hidden",
-                bgcolor: "background.paper",
-                pt: { xs: 9, md: 14 },
-                pb: { xs: 9, md: 13 },
-                scrollMarginTop: { xs: "64px", md: "76px" },
+                position: "absolute",
+                inset: 0,
+                display: "grid",
+                placeItems: "center",
             }}
         >
-            {/* Un resplandor azul muy suave para que el fondo no se vea plano */}
             <Box
-                aria-hidden="true"
                 sx={{
-                    position: "absolute",
-                    inset: 0,
-                    background:
-                        "radial-gradient(45% 35% at 100% 0%, rgba(1,89,177,.07), transparent 70%), radial-gradient(40% 30% at 0% 100%, rgba(91,146,31,.06), transparent 70%)",
-                    pointerEvents: "none",
+                    width: { xs: 100, md: 116 },
+                    height: { xs: 100, md: 116 },
+                    borderRadius: "50%",
+                    display: "grid",
+                    placeItems: "center",
+                    bgcolor: "#fff",
+                    color: "primary.main",
+                    fontFamily: fuenteTitulos,
+                    fontWeight: 700,
+                    fontSize: { xs: 32, md: 38 },
+                    border: "1px solid",
+                    borderColor: "divider",
+                    boxShadow:
+                        "0 0 0 14px rgba(1,89,177,.05), 0 12px 30px rgba(10,37,64,.10)",
                 }}
-            />
+            >
+                {iniciales(nombre)}
+            </Box>
+        </Box>
+    );
+}
 
-            <Container
-                maxWidth="lg"
-                sx={{ position: "relative", zIndex: 1 }}>
-                <EncabezadoSeccion
-                    centrado
-                    etiqueta="Nuestro equipo"
-                    titulo="Las personas detrás de cada proyecto"
-                    subtitulo="Un equipo comprometido con entender tu negocio y entregar tecnología que funciona."
-                />
+// Tarjeta grande de una persona del equipo: foto arriba y datos en una franja azul marino.
+export default function TarjetaMiembro({ miembro, indice = 0 }) {
+    const [falloFoto, setFalloFoto] = useState(false);
+    const hayFoto = Boolean(miembro.foto) && !falloFoto;
 
-                {error && (
-                    <Typography align="center" sx={{ mt: 4, color: "error.main" }}>
-                        No pudimos cargar el equipo. Intenta de nuevo más tarde.
-                    </Typography>
-                )}
-
-                {/* Filas de hasta 3 tarjetas (4 en pantallas grandes). Las que sobran pasan a la fila de abajo y quedan centradas */}
+    return (
+        <Aparecer retraso={indice * 0.1} sx={{ height: "100%" }}>
+            <Box
+                component="article"
+                sx={{
+                    height: "100%",
+                    display: "flex",
+                    flexDirection: "column",
+                    overflow: "hidden",
+                    borderRadius: "16px",
+                    bgcolor: "background.paper",
+                    border: "1px solid",
+                    borderColor: "divider",
+                    boxShadow: "0 10px 30px rgba(10,37,64,.08)",
+                    transition: "transform .3s ease, box-shadow .3s ease",
+                    "@media (hover: hover)": {
+                        "&:hover": {
+                            transform: "translateY(-6px)",
+                            boxShadow: "0 22px 48px rgba(10,37,64,.16)",
+                        },
+                        "&:hover .foto": { transform: "scale(1.04)" },
+                        "&:hover .acento": { width: 64 },
+                    },
+                    "@media (prefers-reduced-motion: reduce)": {
+                        transition: "none",
+                        "&:hover": { transform: "none" },
+                        "&:hover .foto": { transform: "none" },
+                    },
+                }}
+            >
+                {/* Foto */}
                 <Box
                     sx={{
-                        mt: { xs: 5, md: 7 },
-                        display: "flex",
-                        flexWrap: "wrap",
-                        justifyContent: "center",
-                        alignItems: "stretch",
-                        gap: { xs: 3, md: 4 },
+                        position: "relative",
+                        height: { xs: 300, md: 340 },
+                        overflow: "hidden",
+                        background:
+                            "radial-gradient(70% 55% at 50% 30%, #FFFFFF 0%, rgba(255,255,255,0) 100%), linear-gradient(180deg, #EAF1FB 0%, #D5E3F5 100%)",
                     }}
                 >
-                    {cargando &&
-                        [0, 1, 2].map((i) => (
-                            <Box
-                                key={i}
-                                sx={{ flex: "0 0 auto", width: anchoTarjeta, maxWidth: 340 }}
-                            >
-                                <Skeleton
-                                    variant="rounded"
-                                    animation="wave"
-                                    sx={{
-                                        height: { xs: 440, md: 500 },
-                                        borderRadius: "16px",
-                                    }}
-                                />
-                            </Box>
-                        ))}
-
-                    {equipo.map((miembro, indice) => (
+                    {hayFoto ? (
                         <Box
-                            key={miembro.id}
+                            component="img"
+                            className="foto"
+                            src={miembro.foto}
+                            alt={`${miembro.nombre}, ${miembro.cargo}`}
+                            loading="lazy"
+                            onError={() => setFalloFoto(true)}
                             sx={{
-                                flex: "0 0 auto",
-                                width: anchoTarjeta,
-                                maxWidth: 340,
+                                position: "absolute",
+                                inset: 0,
+                                width: "100%",
+                                height: "100%",
+                                objectFit: "cover",
+                                objectPosition: "center top",
+                                transition:
+                                    "transform .6s cubic-bezier(.22,1,.36,1)",
                             }}
-                        >
-                            <TarjetaMiembro
-                                miembro={{ ...miembro, foto: urlImagen(miembro.foto) }}
-                                indice={indice % 3}
-                            />
-                        </Box>
-                    ))}
+                        />
+                    ) : (
+                        <SinFoto nombre={miembro.nombre} />
+                    )}
                 </Box>
 
-                {equipo.length > 0 && (
-                    <Aparecer
-                        retraso={0.1}
+                {/* Datos */}
+                <Box
+                    sx={{
+                        flexGrow: 1,
+                        bgcolor: "marino.main",
+                        color: "#fff",
+                        px: { xs: 2.5, md: 3 },
+                        pt: 2.5,
+                        pb: { xs: 3, md: 3.25 },
+                        borderTop: "3px solid",
+                        borderColor: "secondary.main",
+                    }}
+                >
+                    <Typography
                         sx={{
-                            mt: { xs: 6, md: 8 },
-                            textAlign: "center",
+                            fontSize: 11,
+                            fontWeight: 600,
+                            letterSpacing: ".12em",
+                            textTransform: "uppercase",
+                            color: "secondary.light",
                         }}
                     >
+                        {miembro.cargo}
+                    </Typography>
+
+                    <Typography
+                        component="h3"
+                        sx={{
+                            mt: 0.75,
+                            fontFamily: fuenteTitulos,
+                            fontWeight: 700,
+                            fontSize: { xs: 19, md: 21 },
+                            lineHeight: 1.2,
+                        }}
+                    >
+                        {miembro.nombre}
+                    </Typography>
+
+                    <Box
+                        className="acento"
+                        aria-hidden="true"
+                        sx={{
+                            mt: 1.5,
+                            width: 32,
+                            height: 2,
+                            borderRadius: 1,
+                            background:
+                                "linear-gradient(90deg, #3B9BFF, #8EE04A)",
+                            transition: "width .35s ease",
+                        }}
+                    />
+
+                    {miembro.descripcion && (
                         <Typography
                             sx={{
-                                fontSize: { xs: 15, md: 17 },
-                                color: "text.secondary",
+                                mt: 1.5,
+                                fontSize: 13.5,
+                                lineHeight: 1.6,
+                                color: "rgba(255,255,255,.78)",
                             }}
                         >
-                            ¿Tienes una idea o un proyecto en mente?
+                            {miembro.descripcion}
                         </Typography>
-                        <Button
-                            variant="contained"
-                            href="#contacto"
-                            endIcon={<ArrowForwardIcon />}
-                            sx={{
-                                mt: 2,
-                                px: 4,
-                                minHeight: 48,
-                                transition: "transform .25s, box-shadow .25s",
-                                "&:hover": {
-                                    transform: "translateY(-2px)",
-                                    boxShadow: "0 10px 24px rgba(1,89,177,.3)",
-                                },
-                            }}
-                        >
-                            Hablemos
-                        </Button>
-                    </Aparecer>
-                )}
-            </Container>
-        </Box>
+                    )}
+                </Box>
+            </Box>
+        </Aparecer>
     );
 }
