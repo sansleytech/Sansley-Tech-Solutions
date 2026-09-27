@@ -1,4 +1,11 @@
-import { Box, Container, Divider, Link, Stack, Typography } from "@mui/material";
+import {
+    Box,
+    Container,
+    Divider,
+    Link,
+    Stack,
+    Typography,
+} from "@mui/material";
 import EmailOutlined from "@mui/icons-material/EmailOutlined";
 import WhatsApp from "@mui/icons-material/WhatsApp";
 import LocationOnOutlined from "@mui/icons-material/LocationOnOutlined";
@@ -91,7 +98,10 @@ export default function Footer() {
                 }}
             />
 
-            <Container maxWidth="lg" sx={{ position: "relative", pt: { xs: 5, md: 8 }, pb: 3 }}>
+            <Container
+                maxWidth="lg"
+                sx={{ position: "relative", pt: { xs: 5, md: 8 }, pb: 3 }}
+            >
                 <Box
                     sx={{
                         display: "grid",
@@ -117,9 +127,9 @@ export default function Footer() {
                                         color: "rgba(255,255,255,.68)",
                                     }}
                                 >
-                                    Desarrollo de software a la medida y asesoría
-                                    contable y tributaria para hacer crecer tu
-                                    negocio.
+                                    Desarrollo de software a la medida y
+                                    asesoría contable y tributaria para hacer
+                                    crecer tu negocio.
                                 </Typography>
                             </Box>
                         </Aparecer>
@@ -191,7 +201,13 @@ export default function Footer() {
                     </Box>
                 </Box>
 
-                <Divider sx={{ mt: { xs: 4, md: 6 }, mb: 2.5, borderColor: "rgba(255,255,255,.12)" }} />
+                <Divider
+                    sx={{
+                        mt: { xs: 4, md: 6 },
+                        mb: 2.5,
+                        borderColor: "rgba(255,255,255,.12)",
+                    }}
+                />
 
                 <Stack
                     direction={{ xs: "column-reverse", sm: "row" }}
