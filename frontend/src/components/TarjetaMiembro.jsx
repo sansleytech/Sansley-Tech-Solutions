@@ -6,8 +6,7 @@ import Aparecer from "../components/Aparecer.jsx";
 import useDatos from "../hooks/useDatos.js";
 import { urlImagen } from "../api.js";
 
-// Cuántas tarjetas caben por fila: 1 en celular, 2 en tablet, 3 en computador y 4 en pantallas grandes.
-// Los números 24, 64 y 72 son la suma de los espacios entre tarjetas (en píxeles).
+
 const anchoTarjeta = {
     xs: "100%",
     sm: "calc((100% - 24px) / 2)",
