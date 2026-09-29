@@ -24,6 +24,9 @@ import AddOutlined from "@mui/icons-material/AddOutlined";
 import EditOutlined from "@mui/icons-material/EditOutlined";
 import DeleteOutlineOutlined from "@mui/icons-material/DeleteOutlineOutlined";
 import SaveOutlined from "@mui/icons-material/SaveOutlined";
+import InstagramIcon from "@mui/icons-material/Instagram";
+import FacebookIcon from "@mui/icons-material/Facebook";
+import LinkedInIcon from "@mui/icons-material/LinkedIn";
 import { peticionAdmin } from "../../admin/peticionAdmin.js";
 
 // Los campos del formulario. Sirve de molde para que ninguno quede en null
@@ -37,6 +40,10 @@ const VACIO = {
     correo: "",
     whatsapp: "",
     ubicacion: "",
+    instagram: "",
+    facebook: "",
+    linkedin: "",
+    tiktok: "",
 };
 
 // Convierte lo que llega de la base de datos (con nulls) en textos para los TextField
@@ -159,7 +166,7 @@ function DatosEmpresa({ empresa, onGuardado }) {
             </Stack>
 
             <Typography sx={{ fontWeight: 700, mb: 2 }}>Contacto</Typography>
-            <Stack spacing={2} sx={{ mb: 3 }}>
+            <Stack spacing={2} sx={{ mb: 4 }}>
                 <TextField
                     label="Correo"
                     type="email"
@@ -184,6 +191,78 @@ function DatosEmpresa({ empresa, onGuardado }) {
                     onChange={(e) => cambiar("ubicacion", e.target.value)}
                     fullWidth
                     slotProps={{ htmlInput: { maxLength: 120 } }}
+                />
+            </Stack>
+
+            <Typography sx={{ fontWeight: 700, mb: 2 }}>
+                Redes sociales
+            </Typography>
+            <Stack spacing={2} sx={{ mb: 3 }}>
+                <TextField
+                    label="Instagram"
+                    value={campos.instagram}
+                    onChange={(e) => cambiar("instagram", e.target.value)}
+                    placeholder="https://instagram.com/sansleytech"
+                    helperText="Pega el enlace completo a tu perfil"
+                    fullWidth
+                    slotProps={{
+                        htmlInput: { maxLength: 255 },
+                        input: {
+                            startAdornment: (
+                                <InstagramIcon
+                                    fontSize="small"
+                                    sx={{ mr: 1, color: "text.secondary" }}
+                                />
+                            ),
+                        },
+                    }}
+                />
+                <TextField
+                    label="Facebook"
+                    value={campos.facebook}
+                    onChange={(e) => cambiar("facebook", e.target.value)}
+                    placeholder="https://facebook.com/sansleytech"
+                    helperText="Pega el enlace completo a tu página"
+                    fullWidth
+                    slotProps={{
+                        htmlInput: { maxLength: 255 },
+                        input: {
+                            startAdornment: (
+                                <FacebookIcon
+                                    fontSize="small"
+                                    sx={{ mr: 1, color: "text.secondary" }}
+                                />
+                            ),
+                        },
+                    }}
+                />
+                <TextField
+                    label="LinkedIn"
+                    value={campos.linkedin}
+                    onChange={(e) => cambiar("linkedin", e.target.value)}
+                    placeholder="https://linkedin.com/company/sansleytech"
+                    helperText="Pega el enlace completo a tu página de empresa"
+                    fullWidth
+                    slotProps={{
+                        htmlInput: { maxLength: 255 },
+                        input: {
+                            startAdornment: (
+                                <LinkedInIcon
+                                    fontSize="small"
+                                    sx={{ mr: 1, color: "text.secondary" }}
+                                />
+                            ),
+                        },
+                    }}
+                />
+                <TextField
+                    label="TikTok"
+                    value={campos.tiktok}
+                    onChange={(e) => cambiar("tiktok", e.target.value)}
+                    placeholder="https://tiktok.com/@sansleytech"
+                    helperText="Pega el enlace completo a tu perfil"
+                    fullWidth
+                    slotProps={{ htmlInput: { maxLength: 255 } }}
                 />
             </Stack>
 
@@ -567,7 +646,7 @@ export default function EmpresaAdmin() {
                 </Typography>
                 <Typography color="text.secondary" sx={{ mt: 0.5 }}>
                     La información de Sansley que aparece en el sitio: quiénes
-                    somos, misión, visión y contacto.
+                    somos, misión, visión, contacto y redes sociales.
                 </Typography>
             </Box>
 

@@ -5,7 +5,7 @@ const router = Router()
 
 router.get('/', async (req, res) => {
   const [equipo] = await db.query(
-    'SELECT id, nombre, cargo, descripcion, foto FROM equipo WHERE activo = TRUE ORDER BY orden'
+    'SELECT id, nombre, cargo, descripcion, foto, instagram, facebook, linkedin, tiktok FROM equipo WHERE activo = TRUE ORDER BY orden'
   )
   res.json(equipo)
 })

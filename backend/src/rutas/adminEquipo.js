@@ -9,26 +9,38 @@ const router = Router()
 router.use(verificarToken)
 
 const subirFoto = subirUna('equipo')
-const CAMPOS = 'id, nombre, cargo, descripcion, foto, orden, activo'
+const CAMPOS = 'id, nombre, cargo, descripcion, foto, orden, activo, instagram, facebook, linkedin, tiktok'
+const CAMPOS_REDES = ['instagram', 'facebook', 'linkedin', 'tiktok']
 
 // Convierte lo que llega del formulario (todo texto) en valores listos para la base de datos
 function leerFormulario(cuerpo) {
     const orden = Number.parseInt(cuerpo.orden, 10)
     const activo =
         cuerpo.activo === undefined ? true : ['1', 'true', 'on'].includes(String(cuerpo.activo))
-    return {
+
+    const datos = {
         nombre: cuerpo.nombre?.trim() ?? '',
         cargo: cuerpo.cargo?.trim() ?? '',
         descripcion: cuerpo.descripcion?.trim() || null,
         orden: Number.isNaN(orden) ? 0 : orden,
         activo: activo ? 1 : 0,
     }
+
+    for (const campo of CAMPOS_REDES) {
+        datos[campo] = cuerpo[campo]?.trim() || null
+    }
+
+    return datos
 }
 
 function errorDeDatos(datos) {
     if (!datos.nombre || !datos.cargo) return 'Nombre y cargo son obligatorios'
     if (datos.nombre.length > 120) return 'El nombre no puede superar 120 caracteres'
     if (datos.cargo.length > 100) return 'El cargo no puede superar 100 caracteres'
+    for (const campo of CAMPOS_REDES) {
+        if (datos[campo] && datos[campo].length > 255)
+            return `El enlace de ${campo} no puede superar 255 caracteres`
+    }
     return null
 }
 
@@ -50,8 +62,20 @@ router.post('/', subirFoto, async (req, res) => {
     }
 
     const [resultado] = await db.execute(
-        'INSERT INTO equipo (nombre, cargo, descripcion, foto, orden, activo) VALUES (?, ?, ?, ?, ?, ?)',
-        [datos.nombre, datos.cargo, datos.descripcion, foto, datos.orden, datos.activo]
+        `INSERT INTO equipo (nombre, cargo, descripcion, foto, orden, activo, instagram, facebook, linkedin, tiktok)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        [
+            datos.nombre,
+            datos.cargo,
+            datos.descripcion,
+            foto,
+            datos.orden,
+            datos.activo,
+            datos.instagram,
+            datos.facebook,
+            datos.linkedin,
+            datos.tiktok,
+        ]
     )
     const [[nuevo]] = await db.query(`SELECT ${CAMPOS} FROM equipo WHERE id = ?`, [resultado.insertId])
     res.status(201).json(nuevo)
@@ -80,8 +104,22 @@ router.put('/:id', subirFoto, async (req, res) => {
     else if (cuerpo.quitarFoto === 'true') foto = null
 
     await db.execute(
-        'UPDATE equipo SET nombre = ?, cargo = ?, descripcion = ?, foto = ?, orden = ?, activo = ? WHERE id = ?',
-        [datos.nombre, datos.cargo, datos.descripcion, foto, datos.orden, datos.activo, req.params.id]
+        `UPDATE equipo SET nombre = ?, cargo = ?, descripcion = ?, foto = ?, orden = ?, activo = ?,
+                instagram = ?, facebook = ?, linkedin = ?, tiktok = ?
+         WHERE id = ?`,
+        [
+            datos.nombre,
+            datos.cargo,
+            datos.descripcion,
+            foto,
+            datos.orden,
+            datos.activo,
+            datos.instagram,
+            datos.facebook,
+            datos.linkedin,
+            datos.tiktok,
+            req.params.id,
+        ]
     )
     if (foto !== fotoAnterior) borrarImagen(fotoAnterior)
 

@@ -55,17 +55,8 @@ function FilaMiembro({ miembro, separador, onEditar, onEliminar }) {
             </Avatar>
 
             <Box sx={{ flexGrow: 1, minWidth: 0 }}>
-                <Box
-                    sx={{
-                        display: "flex",
-                        alignItems: "center",
-                        gap: 1,
-                        flexWrap: "wrap",
-                    }}
-                >
-                    <Typography sx={{ fontWeight: 700 }}>
-                        {miembro.nombre}
-                    </Typography>
+                <Box sx={{ display: "flex", alignItems: "center", gap: 1, flexWrap: "wrap" }}>
+                    <Typography sx={{ fontWeight: 700 }}>{miembro.nombre}</Typography>
                     {!miembro.activo && <Chip size="small" label="Oculto" />}
                 </Box>
                 <Typography color="text.secondary" noWrap sx={{ fontSize: 14 }}>
@@ -79,11 +70,7 @@ function FilaMiembro({ miembro, separador, onEditar, onEliminar }) {
                 </IconButton>
             </Tooltip>
             <Tooltip title="Eliminar">
-                <IconButton
-                    onClick={onEliminar}
-                    color="error"
-                    aria-label="Eliminar"
-                >
+                <IconButton onClick={onEliminar} color="error" aria-label="Eliminar">
                     <DeleteOutlineOutlined />
                 </IconButton>
             </Tooltip>
@@ -113,8 +100,7 @@ function FormularioMiembro({ miembro, ordenSugerido, onCerrar, onGuardado }) {
     const [error, setError] = useState("");
     const [guardando, setGuardando] = useState(false);
 
-    const fotoActual =
-        vistaPrevia ?? (quitarFoto ? null : urlImagen(miembro.foto));
+    const fotoActual = vistaPrevia ?? (quitarFoto ? null : urlImagen(miembro.foto));
 
     function cambiar(campo, valor) {
         setCampos({ ...campos, [campo]: valor });
@@ -170,7 +156,7 @@ function FormularioMiembro({ miembro, ordenSugerido, onCerrar, onGuardado }) {
 
             await peticionAdmin(
                 esNuevo ? "/admin/equipo" : `/admin/equipo/${miembro.id}`,
-                { method: esNuevo ? "POST" : "PUT", body: datos },
+                { method: esNuevo ? "POST" : "PUT", body: datos }
             );
             onGuardado(esNuevo ? "Integrante creado" : "Cambios guardados");
         } catch (e) {
@@ -199,23 +185,10 @@ function FormularioMiembro({ miembro, ordenSugerido, onCerrar, onGuardado }) {
                 )}
 
                 {/* Foto */}
-                <Box
-                    sx={{
-                        display: "flex",
-                        alignItems: "center",
-                        gap: 2,
-                        mb: 3,
-                        mt: 1,
-                    }}
-                >
+                <Box sx={{ display: "flex", alignItems: "center", gap: 2, mb: 3, mt: 1 }}>
                     <Avatar
                         src={fotoActual ?? undefined}
-                        sx={{
-                            width: 88,
-                            height: 88,
-                            bgcolor: "primary.main",
-                            fontSize: 32,
-                        }}
+                        sx={{ width: 88, height: 88, bgcolor: "primary.main", fontSize: 32 }}
                     >
                         {campos.nombre.charAt(0).toUpperCase()}
                     </Avatar>
@@ -239,10 +212,7 @@ function FormularioMiembro({ miembro, ordenSugerido, onCerrar, onGuardado }) {
                                 Quitar foto
                             </Button>
                         )}
-                        <Typography
-                            color="text.secondary"
-                            sx={{ fontSize: 12 }}
-                        >
+                        <Typography color="text.secondary" sx={{ fontSize: 12 }}>
                             JPG, PNG o WebP · máx. {MAX_MB} MB
                         </Typography>
                     </Stack>
@@ -285,9 +255,7 @@ function FormularioMiembro({ miembro, ordenSugerido, onCerrar, onGuardado }) {
                         control={
                             <Switch
                                 checked={campos.activo}
-                                onChange={(e) =>
-                                    cambiar("activo", e.target.checked)
-                                }
+                                onChange={(e) => cambiar("activo", e.target.checked)}
                             />
                         }
                         label="Visible en el sitio"
@@ -367,11 +335,7 @@ function FormularioMiembro({ miembro, ordenSugerido, onCerrar, onGuardado }) {
                 <Button onClick={onCerrar} disabled={guardando}>
                     Cancelar
                 </Button>
-                <Button
-                    variant="contained"
-                    onClick={guardar}
-                    disabled={guardando}
-                >
+                <Button variant="contained" onClick={guardar} disabled={guardando}>
                     {guardando ? "Guardando..." : "Guardar"}
                 </Button>
             </DialogActions>
@@ -388,9 +352,7 @@ function ConfirmarEliminar({ miembro, onCancelar, onEliminado }) {
         setEliminando(true);
         setError("");
         try {
-            await peticionAdmin(`/admin/equipo/${miembro.id}`, {
-                method: "DELETE",
-            });
+            await peticionAdmin(`/admin/equipo/${miembro.id}`, { method: "DELETE" });
             onEliminado();
         } catch (e) {
             setError(e.message);
@@ -399,15 +361,8 @@ function ConfirmarEliminar({ miembro, onCancelar, onEliminado }) {
     }
 
     return (
-        <Dialog
-            open
-            onClose={eliminando ? undefined : onCancelar}
-            maxWidth="xs"
-            fullWidth
-        >
-            <DialogTitle sx={{ fontWeight: 700 }}>
-                ¿Eliminar a {miembro.nombre}?
-            </DialogTitle>
+        <Dialog open onClose={eliminando ? undefined : onCancelar} maxWidth="xs" fullWidth>
+            <DialogTitle sx={{ fontWeight: 700 }}>¿Eliminar a {miembro.nombre}?</DialogTitle>
             <DialogContent>
                 {error && (
                     <Alert severity="error" sx={{ mb: 2 }}>
@@ -415,21 +370,15 @@ function ConfirmarEliminar({ miembro, onCancelar, onEliminado }) {
                     </Alert>
                 )}
                 <Typography color="text.secondary">
-                    Se quitará del sitio y se borrará su foto. Esta acción no se
-                    puede deshacer. Si solo quieres ocultarlo, edítalo y apaga
-                    "Visible en el sitio".
+                    Se quitará del sitio y se borrará su foto. Esta acción no se puede deshacer. Si solo
+                    quieres ocultarlo, edítalo y apaga "Visible en el sitio".
                 </Typography>
             </DialogContent>
             <DialogActions sx={{ px: 3, pb: 2 }}>
                 <Button onClick={onCancelar} disabled={eliminando}>
                     Cancelar
                 </Button>
-                <Button
-                    color="error"
-                    variant="contained"
-                    onClick={eliminar}
-                    disabled={eliminando}
-                >
+                <Button color="error" variant="contained" onClick={eliminar} disabled={eliminando}>
                     {eliminando ? "Eliminando..." : "Eliminar"}
                 </Button>
             </DialogActions>
@@ -477,22 +426,14 @@ export default function EquipoAdmin() {
                 }}
             >
                 <Box>
-                    <Typography
-                        variant="h4"
-                        sx={{ fontWeight: 700, fontSize: { xs: 24, md: 32 } }}
-                    >
+                    <Typography variant="h4" sx={{ fontWeight: 700, fontSize: { xs: 24, md: 32 } }}>
                         Equipo
                     </Typography>
                     <Typography color="text.secondary" sx={{ mt: 0.5 }}>
-                        Las personas que aparecen en la sección "Nuestro equipo"
-                        del sitio.
+                        Las personas que aparecen en la sección "Nuestro equipo" del sitio.
                     </Typography>
                 </Box>
-                <Button
-                    variant="contained"
-                    startIcon={<AddOutlined />}
-                    onClick={() => setEditando({})}
-                >
+                <Button variant="contained" startIcon={<AddOutlined />} onClick={() => setEditando({})}>
                     Nuevo integrante
                 </Button>
             </Box>
@@ -513,13 +454,8 @@ export default function EquipoAdmin() {
                 )}
 
                 {!cargando && !error && lista.length === 0 && (
-                    <Typography
-                        color="text.secondary"
-                        align="center"
-                        sx={{ p: 4 }}
-                    >
-                        Aún no hay integrantes. Crea el primero con el botón
-                        "Nuevo integrante".
+                    <Typography color="text.secondary" align="center" sx={{ p: 4 }}>
+                        Aún no hay integrantes. Crea el primero con el botón "Nuevo integrante".
                     </Typography>
                 )}
 
@@ -563,16 +499,8 @@ export default function EquipoAdmin() {
             )}
 
             {/* Aviso verde al guardar o eliminar */}
-            <Snackbar
-                open={Boolean(aviso)}
-                autoHideDuration={3500}
-                onClose={() => setAviso("")}
-            >
-                <Alert
-                    severity="success"
-                    variant="filled"
-                    onClose={() => setAviso("")}
-                >
+            <Snackbar open={Boolean(aviso)} autoHideDuration={3500} onClose={() => setAviso("")}>
+                <Alert severity="success" variant="filled" onClose={() => setAviso("")}>
                     {aviso}
                 </Alert>
             </Snackbar>

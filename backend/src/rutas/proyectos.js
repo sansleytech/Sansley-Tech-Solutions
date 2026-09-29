@@ -20,11 +20,25 @@ router.get("/", async (req, res) => {
     ORDER BY p.orden
   `);
 
+  // Trae la galería de todos los proyectos de una sola vez (agrupada por proyecto abajo)
+  let imagenesPorProyecto = {};
+  if (filas.length > 0) {
+    const [imagenes] = await db.query(
+      `SELECT proyecto_id, ruta FROM proyecto_imagenes WHERE proyecto_id IN (?) ORDER BY orden, id`,
+      [filas.map((p) => p.id)]
+    );
+    for (const imagen of imagenes) {
+      (imagenesPorProyecto[imagen.proyecto_id] ??= []).push(imagen.ruta);
+    }
+  }
+
   const proyectos = filas.map(p => ({
     ...p,
     mostrar_iframe: Boolean(p.mostrar_iframe),
     destacado: Boolean(p.destacado),
-    tecnologias: p.tecnologias ? p.tecnologias.split(",") : []
+    tecnologias: p.tecnologias ? p.tecnologias.split(",") : [],
+    // Si el proyecto aún no tiene galería, usamos su imagen antigua como única foto
+    imagenes: imagenesPorProyecto[p.id] ?? (p.imagen ? [p.imagen] : []),
   }));
 
   res.json(proyectos);

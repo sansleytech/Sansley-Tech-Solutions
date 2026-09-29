@@ -29,7 +29,9 @@ const derivar = keyframes`
 `;
 
 // Quien pidió "reducir movimiento" en su equipo no ve animaciones infinitas
-const sinAnimacion = { "@media (prefers-reduced-motion: reduce)": { animation: "none" } };
+const sinAnimacion = {
+    "@media (prefers-reduced-motion: reduce)": { animation: "none" },
+};
 
 /* ---------- Entrada rápida del texto (uno tras otro) ---------- */
 const contenedor = {
@@ -46,8 +48,14 @@ function LogoAnimado() {
     const sinMovimiento = useReducedMotion();
     const x = useMotionValue(0);
     const y = useMotionValue(0);
-    const giroX = useSpring(useTransform(y, [-0.5, 0.5], [10, -10]), { stiffness: 140, damping: 16 });
-    const giroY = useSpring(useTransform(x, [-0.5, 0.5], [-12, 12]), { stiffness: 140, damping: 16 });
+    const giroX = useSpring(useTransform(y, [-0.5, 0.5], [10, -10]), {
+        stiffness: 140,
+        damping: 16,
+    });
+    const giroY = useSpring(useTransform(x, [-0.5, 0.5], [-12, 12]), {
+        stiffness: 140,
+        damping: 16,
+    });
 
     // El logo se inclina un poco siguiendo el cursor
     useEffect(() => {
@@ -86,14 +94,22 @@ function LogoAnimado() {
             />
 
             <MotionBox
-                style={{ rotateX: giroX, rotateY: giroY, transformPerspective: 900 }}
+                style={{
+                    rotateX: giroX,
+                    rotateY: giroY,
+                    transformPerspective: 900,
+                }}
                 sx={{ position: "relative" }}
             >
                 <motion.img
                     src={logo}
                     alt="Sansley Tech Solutions"
                     animate={sinMovimiento ? undefined : { y: [0, -12, 0] }}
-                    transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
+                    transition={{
+                        duration: 5,
+                        repeat: Infinity,
+                        ease: "easeInOut",
+                    }}
                     style={{
                         width: "100%",
                         height: "auto",
@@ -135,7 +151,8 @@ export default function Hero() {
                     width: { xs: 320, md: 620 },
                     height: { xs: 320, md: 620 },
                     borderRadius: "50%",
-                    background: "radial-gradient(closest-side, rgba(1,89,177,.55), transparent)",
+                    background:
+                        "radial-gradient(closest-side, rgba(1,89,177,.55), transparent)",
                     filter: "blur(30px)",
                     animation: `${derivar} 18s ease-in-out infinite`,
                     ...sinAnimacion,
@@ -150,7 +167,8 @@ export default function Hero() {
                     width: { xs: 300, md: 560 },
                     height: { xs: 300, md: 560 },
                     borderRadius: "50%",
-                    background: "radial-gradient(closest-side, rgba(91,146,31,.35), transparent)",
+                    background:
+                        "radial-gradient(closest-side, rgba(91,146,31,.35), transparent)",
                     filter: "blur(30px)",
                     animation: `${derivar} 22s ease-in-out infinite reverse`,
                     ...sinAnimacion,
@@ -215,15 +233,27 @@ export default function Hero() {
                                 Tecnología y contabilidad que{" "}
                                 <Box
                                     component="span"
-                                    sx={{ position: "relative", color: "secondary.light", whiteSpace: "nowrap" }}
+                                    sx={{
+                                        position: "relative",
+                                        color: "secondary.light",
+                                        whiteSpace: "nowrap",
+                                    }}
                                 >
                                     impulsan
                                     {/* Subrayado que se dibuja al cargar */}
                                     <motion.span
                                         aria-hidden="true"
-                                        initial={sinMovimiento ? false : { scaleX: 0 }}
+                                        initial={
+                                            sinMovimiento
+                                                ? false
+                                                : { scaleX: 0 }
+                                        }
                                         animate={{ scaleX: 1 }}
-                                        transition={{ duration: 0.5, delay: 0.55, ease: SUAVE }}
+                                        transition={{
+                                            duration: 0.5,
+                                            delay: 0.55,
+                                            ease: SUAVE,
+                                        }}
                                         style={{
                                             position: "absolute",
                                             left: 0,
@@ -232,7 +262,8 @@ export default function Hero() {
                                             height: 4,
                                             borderRadius: 2,
                                             transformOrigin: "0 50%",
-                                            background: "linear-gradient(90deg, #9CCB5C, #3B9BFF)",
+                                            background:
+                                                "linear-gradient(90deg, #9CCB5C, #3B9BFF)",
                                         }}
                                     />
                                 </Box>{" "}
@@ -251,9 +282,9 @@ export default function Hero() {
                                     color: "rgba(255,255,255,.78)",
                                 }}
                             >
-                                Construimos software a la medida y llevamos tu contabilidad y
-                                tus impuestos al día, para que tu empresa crezca con orden y
-                                con tecnología.
+                                Construimos software a la medida y llevamos tu
+                                contabilidad y tus impuestos al día, para que tu
+                                empresa crezca con orden y con tecnología.
                             </Typography>
                         </MotionBox>
 
@@ -263,7 +294,11 @@ export default function Hero() {
                                 mt: { xs: 3, md: 5 },
                                 display: "flex",
                                 gap: { xs: 1.5, md: 2 },
-                                justifyContent: { xs: "stretch", sm: "center", md: "flex-start" },
+                                justifyContent: {
+                                    xs: "stretch",
+                                    sm: "center",
+                                    md: "flex-start",
+                                },
                             }}
                         >
                             <Button
@@ -276,7 +311,8 @@ export default function Hero() {
                                     transition: "transform .2s, box-shadow .2s",
                                     "&:hover": {
                                         transform: "translateY(-3px)",
-                                        boxShadow: "0 10px 28px rgba(59,155,255,.55)",
+                                        boxShadow:
+                                            "0 10px 28px rgba(59,155,255,.55)",
                                     },
                                 }}
                             >
@@ -291,7 +327,8 @@ export default function Hero() {
                                     minHeight: 48,
                                     color: "#fff",
                                     borderColor: "rgba(255,255,255,.4)",
-                                    transition: "transform .2s, background-color .2s, border-color .2s",
+                                    transition:
+                                        "transform .2s, background-color .2s, border-color .2s",
                                     "&:hover": {
                                         borderColor: "#fff",
                                         bgcolor: "rgba(255,255,255,.1)",
@@ -299,7 +336,7 @@ export default function Hero() {
                                     },
                                 }}
                             >
-                                Solicitar propuesta
+                                Consultar proyecto
                             </Button>
                         </MotionBox>
                     </MotionBox>

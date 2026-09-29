@@ -62,6 +62,54 @@ export function subirUna(carpeta, campo = 'foto') {
     }
 }
 
+// Igual que subirUna, pero para varias imágenes a la vez (por ejemplo, la galería de un proyecto).
+// Cada imagen se procesa (rota, redimensiona y comprime) exactamente igual, una por una.
+export function subirVarias(carpeta, campo = 'imagenes', maximo = 12) {
+    const destino = path.join(RAIZ_UPLOADS, carpeta)
+    fs.mkdirSync(destino, { recursive: true })
+
+    const subir = multer({
+        storage: multer.memoryStorage(),
+        limits: { fileSize: MAX_MB * 1024 * 1024 },
+        fileFilter: (req, archivo, cb) => {
+            if (TIPOS_PERMITIDOS.includes(archivo.mimetype)) cb(null, true)
+            else cb(new Error('Solo se permiten imágenes JPG, PNG o WebP'))
+        },
+    }).array(campo, maximo)
+
+    return (req, res, next) => {
+        subir(req, res, async (error) => {
+            if (error) {
+                const mensaje =
+                    error.code === 'LIMIT_FILE_SIZE'
+                        ? `Cada imagen debe pesar como máximo ${MAX_MB} MB`
+                        : error.code === 'LIMIT_UNEXPECTED_FILE'
+                          ? `Puedes subir máximo ${maximo} imágenes a la vez`
+                          : error.message
+                return res.status(400).json({ mensaje })
+            }
+            if (!req.files || req.files.length === 0) return next()
+
+            try {
+                for (const archivo of req.files) {
+                    const nombreArchivo = `${crypto.randomUUID()}.jpg`
+                    const buffer = await sharp(archivo.buffer)
+                        .rotate()
+                        .resize({ width: ANCHO_MAXIMO, withoutEnlargement: true })
+                        .jpeg({ quality: CALIDAD_JPEG, mozjpeg: true })
+                        .toBuffer()
+
+                    fs.writeFileSync(path.join(destino, nombreArchivo), buffer)
+                    archivo.filename = nombreArchivo
+                }
+                next()
+            } catch {
+                res.status(400).json({ mensaje: 'No pudimos procesar alguna de las imágenes. Intenta de nuevo.' })
+            }
+        })
+    }
+}
+
 // Ruta que se guarda en la base de datos y que el navegador usa para pedir la imagen
 export function rutaPublica(carpeta, nombreArchivo) {
     return `/uploads/${carpeta}/${nombreArchivo}`

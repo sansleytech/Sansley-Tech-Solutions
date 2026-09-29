@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Box, Typography } from "@mui/material";
 import Aparecer from "./Aparecer.jsx";
+import RedesSociales from "./RedesSociales.jsx";
 
 const fuenteTitulos = '"Poppins", "Helvetica", "Arial", sans-serif';
 
@@ -39,8 +40,7 @@ function SinFoto({ nombre }) {
                     fontSize: { xs: 32, md: 38 },
                     border: "1px solid",
                     borderColor: "divider",
-                    boxShadow:
-                        "0 0 0 14px rgba(1,89,177,.05), 0 12px 30px rgba(10,37,64,.10)",
+                    boxShadow: "0 0 0 14px rgba(1,89,177,.05), 0 12px 30px rgba(10,37,64,.10)",
                 }}
             >
                 {iniciales(nombre)}
@@ -53,6 +53,14 @@ function SinFoto({ nombre }) {
 export default function TarjetaMiembro({ miembro, indice = 0 }) {
     const [falloFoto, setFalloFoto] = useState(false);
     const hayFoto = Boolean(miembro.foto) && !falloFoto;
+
+    const redes = {
+        instagram: miembro.instagram,
+        facebook: miembro.facebook,
+        linkedin: miembro.linkedin,
+        tiktok: miembro.tiktok,
+    };
+    const hayRedes = Object.values(redes).some(Boolean);
 
     return (
         <Aparecer retraso={indice * 0.1} sx={{ height: "100%" }}>
@@ -109,8 +117,7 @@ export default function TarjetaMiembro({ miembro, indice = 0 }) {
                                 height: "100%",
                                 objectFit: "cover",
                                 objectPosition: "center top",
-                                transition:
-                                    "transform .6s cubic-bezier(.22,1,.36,1)",
+                                transition: "transform .6s cubic-bezier(.22,1,.36,1)",
                             }}
                         />
                     ) : (
@@ -164,8 +171,7 @@ export default function TarjetaMiembro({ miembro, indice = 0 }) {
                             width: 32,
                             height: 2,
                             borderRadius: 1,
-                            background:
-                                "linear-gradient(90deg, #3B9BFF, #8EE04A)",
+                            background: "linear-gradient(90deg, #3B9BFF, #8EE04A)",
                             transition: "width .35s ease",
                         }}
                     />
@@ -181,6 +187,12 @@ export default function TarjetaMiembro({ miembro, indice = 0 }) {
                         >
                             {miembro.descripcion}
                         </Typography>
+                    )}
+
+                    {hayRedes && (
+                        <Box sx={{ mt: 2 }}>
+                            <RedesSociales redes={redes} tamano={16} espaciado={0.75} />
+                        </Box>
                     )}
                 </Box>
             </Box>
