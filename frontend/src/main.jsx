@@ -15,3 +15,13 @@ createRoot(document.getElementById("root")).render(
     </ThemeProvider>
   </StrictMode>,
 );
+
+// Registra el service worker para que el navegador ofrezca "Instalar app".
+// Si falla (por ejemplo en desarrollo sin HTTPS), no rompe nada más.
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("/sw.js").catch(() => {
+      // silencioso: la app funciona igual sin el service worker
+    });
+  });
+}

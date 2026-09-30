@@ -50,7 +50,7 @@ export default function Login() {
             setError(
                 e.message === "Failed to fetch"
                     ? "No hay conexión con el servidor"
-                    : e.message
+                    : e.message,
             );
         } finally {
             setEnviando(false);
@@ -80,7 +80,11 @@ export default function Login() {
                     sx={{ height: 48, display: "block", mx: "auto", mb: 3 }}
                 />
 
-                <Typography variant="h5" align="center" sx={{ fontWeight: 700 }}>
+                <Typography
+                    variant="h5"
+                    align="center"
+                    sx={{ fontWeight: 700 }}
+                >
                     Panel de administración
                 </Typography>
                 <Typography
@@ -126,7 +130,11 @@ export default function Login() {
                                         edge="end"
                                         aria-label="Mostrar u ocultar contraseña"
                                     >
-                                        {verClave ? <VisibilityOffOutlined /> : <VisibilityOutlined />}
+                                        {verClave ? (
+                                            <VisibilityOffOutlined />
+                                        ) : (
+                                            <VisibilityOutlined />
+                                        )}
                                     </IconButton>
                                 </InputAdornment>
                             ),
@@ -140,6 +148,7 @@ export default function Login() {
                     size="large"
                     fullWidth
                     disabled={enviando}
+                    sx={{ textTransform: "none" }}
                 >
                     {enviando ? "Ingresando..." : "Ingresar"}
                 </Button>

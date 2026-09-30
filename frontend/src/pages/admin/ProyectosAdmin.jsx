@@ -45,8 +45,10 @@ const ESTADOS = {
 
 /* ---------- Fila de la lista ---------- */
 function FilaProyecto({ proyecto, separador, onEditar, onEliminar }) {
-    // "Servicio · Cliente", omitiendo lo que esté vacío
-    const detalle = [proyecto.servicio, proyecto.cliente].filter(Boolean).join(" · ");
+    // "Categoría · Cliente", omitiendo lo que esté vacío. Si no tiene categoría, mostramos el servicio.
+    const detalle = [proyecto.categoria ?? proyecto.servicio, proyecto.cliente]
+        .filter(Boolean)
+        .join(" · ");
 
     return (
         <Box
@@ -73,9 +75,27 @@ function FilaProyecto({ proyecto, separador, onEditar, onEliminar }) {
             </Avatar>
 
             <Box sx={{ flexGrow: 1, minWidth: 0 }}>
-                <Box sx={{ display: "flex", alignItems: "center", gap: 1, flexWrap: "wrap" }}>
-                    <Typography sx={{ fontWeight: 700 }}>{proyecto.nombre}</Typography>
-                    {!proyecto.publicado && <Chip size="small" label="Borrador" />}
+                <Box
+                    sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 1,
+                        flexWrap: "wrap",
+                    }}
+                >
+                    <Typography sx={{ fontWeight: 700 }}>
+                        {proyecto.nombre}
+                    </Typography>
+                    {!proyecto.publicado && (
+                        <Chip size="small" label="Borrador" />
+                    )}
+                    {!proyecto.categoria && (
+                        <Chip
+                            size="small"
+                            variant="outlined"
+                            label="Sin categoría"
+                        />
+                    )}
                     {ESTADOS[proyecto.estado] && (
                         <Chip
                             size="small"
@@ -98,7 +118,11 @@ function FilaProyecto({ proyecto, separador, onEditar, onEliminar }) {
                     {detalle}
                 </Typography>
                 {proyecto.tecnologias.length > 0 && (
-                    <Typography color="text.secondary" noWrap sx={{ fontSize: 13, opacity: 0.8 }}>
+                    <Typography
+                        color="text.secondary"
+                        noWrap
+                        sx={{ fontSize: 13, opacity: 0.8 }}
+                    >
                         {proyecto.tecnologias.join(" · ")}
                     </Typography>
                 )}
@@ -110,7 +134,11 @@ function FilaProyecto({ proyecto, separador, onEditar, onEliminar }) {
                 </IconButton>
             </Tooltip>
             <Tooltip title="Eliminar">
-                <IconButton onClick={onEliminar} color="error" aria-label="Eliminar">
+                <IconButton
+                    onClick={onEliminar}
+                    color="error"
+                    aria-label="Eliminar"
+                >
                     <DeleteOutlineOutlined />
                 </IconButton>
             </Tooltip>
@@ -119,7 +147,13 @@ function FilaProyecto({ proyecto, separador, onEditar, onEliminar }) {
 }
 
 /* ---------- Ventana para crear / editar ---------- */
-function FormularioProyecto({ proyecto, opciones, ordenSugerido, onCerrar, onGuardado }) {
+function FormularioProyecto({
+    proyecto,
+    opciones,
+    ordenSugerido,
+    onCerrar,
+    onGuardado,
+}) {
     const esNuevo = !proyecto.id;
     const esMovil = useMediaQuery((tema) => tema.breakpoints.down("sm"));
 
@@ -128,12 +162,16 @@ function FormularioProyecto({ proyecto, opciones, ordenSugerido, onCerrar, onGua
         descripcion_corta: proyecto.descripcion_corta ?? "",
         descripcion: proyecto.descripcion ?? "",
         servicio_id: proyecto.servicio_id ?? "",
+        categoria_id: proyecto.categoria_id ?? "",
         cliente: proyecto.cliente ?? "",
         tecnologias: proyecto.tecnologias ?? [],
         url: proyecto.url ?? "",
         orden: proyecto.orden ?? ordenSugerido,
         estado: proyecto.estado ?? "en_proceso",
-        publicado: proyecto.publicado === undefined ? true : Boolean(proyecto.publicado),
+        publicado:
+            proyecto.publicado === undefined
+                ? true
+                : Boolean(proyecto.publicado),
         mostrar_iframe: Boolean(proyecto.mostrar_iframe),
         destacado: Boolean(proyecto.destacado),
     });
@@ -143,7 +181,8 @@ function FormularioProyecto({ proyecto, opciones, ordenSugerido, onCerrar, onGua
     const [error, setError] = useState("");
     const [guardando, setGuardando] = useState(false);
 
-    const imagenActual = vistaPrevia ?? (quitarImagen ? null : urlImagen(proyecto.imagen));
+    const imagenActual =
+        vistaPrevia ?? (quitarImagen ? null : urlImagen(proyecto.imagen));
 
     function cambiar(campo, valor) {
         setCampos({ ...campos, [campo]: valor });
@@ -192,6 +231,7 @@ function FormularioProyecto({ proyecto, opciones, ordenSugerido, onCerrar, onGua
             datos.append("descripcion_corta", campos.descripcion_corta);
             datos.append("descripcion", campos.descripcion);
             datos.append("servicio_id", campos.servicio_id);
+            datos.append("categoria_id", campos.categoria_id);
             datos.append("cliente", campos.cliente);
             datos.append("tecnologias", JSON.stringify(campos.tecnologias));
             datos.append("url", campos.url);
@@ -204,8 +244,10 @@ function FormularioProyecto({ proyecto, opciones, ordenSugerido, onCerrar, onGua
             if (quitarImagen) datos.append("quitarImagen", "true");
 
             await peticionAdmin(
-                esNuevo ? "/admin/proyectos" : `/admin/proyectos/${proyecto.id}`,
-                { method: esNuevo ? "POST" : "PUT", body: datos }
+                esNuevo
+                    ? "/admin/proyectos"
+                    : `/admin/proyectos/${proyecto.id}`,
+                { method: esNuevo ? "POST" : "PUT", body: datos },
             );
             onGuardado(esNuevo ? "Proyecto creado" : "Cambios guardados");
         } catch (e) {
@@ -254,13 +296,25 @@ function FormularioProyecto({ proyecto, opciones, ordenSugerido, onCerrar, onGua
                                 component="img"
                                 src={imagenActual}
                                 alt="Vista previa"
-                                sx={{ width: "100%", height: "100%", objectFit: "cover" }}
+                                sx={{
+                                    width: "100%",
+                                    height: "100%",
+                                    objectFit: "cover",
+                                }}
                             />
                         ) : (
                             <ImageOutlined fontSize="large" />
                         )}
                     </Box>
-                    <Box sx={{ display: "flex", alignItems: "center", gap: 1, mt: 1, flexWrap: "wrap" }}>
+                    <Box
+                        sx={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: 1,
+                            mt: 1,
+                            flexWrap: "wrap",
+                        }}
+                    >
                         <Button
                             component="label"
                             variant="outlined"
@@ -280,7 +334,10 @@ function FormularioProyecto({ proyecto, opciones, ordenSugerido, onCerrar, onGua
                                 Quitar
                             </Button>
                         )}
-                        <Typography color="text.secondary" sx={{ fontSize: 12 }}>
+                        <Typography
+                            color="text.secondary"
+                            sx={{ fontSize: 12 }}
+                        >
                             JPG, PNG o WebP · máx. {MAX_MB} MB
                         </Typography>
                     </Box>
@@ -298,7 +355,9 @@ function FormularioProyecto({ proyecto, opciones, ordenSugerido, onCerrar, onGua
                     <TextField
                         label="Descripción corta"
                         value={campos.descripcion_corta}
-                        onChange={(e) => cambiar("descripcion_corta", e.target.value)}
+                        onChange={(e) =>
+                            cambiar("descripcion_corta", e.target.value)
+                        }
                         required
                         fullWidth
                         helperText={`Es la que sale en la tarjeta · ${campos.descripcion_corta.length}/255`}
@@ -315,11 +374,30 @@ function FormularioProyecto({ proyecto, opciones, ordenSugerido, onCerrar, onGua
 
                     <TextField
                         select
+                        label="Categoría"
+                        value={campos.categoria_id}
+                        onChange={(e) =>
+                            cambiar("categoria_id", e.target.value)
+                        }
+                        fullWidth
+                        helperText="Es lo que se muestra en el portafolio del sitio y sirve para filtrar. Créalas en Categorías."
+                    >
+                        <MenuItem value="">Sin categoría</MenuItem>
+                        {(opciones.categorias ?? []).map((categoria) => (
+                            <MenuItem key={categoria.id} value={categoria.id}>
+                                {categoria.nombre}
+                            </MenuItem>
+                        ))}
+                    </TextField>
+
+                    <TextField
+                        select
                         label="Servicio"
                         value={campos.servicio_id}
                         onChange={(e) => cambiar("servicio_id", e.target.value)}
                         required
                         fullWidth
+                        helperText="Uso interno: con qué servicio se relaciona (no se muestra en el portafolio)"
                     >
                         {opciones.servicios.map((servicio) => (
                             <MenuItem key={servicio.id} value={servicio.id}>
@@ -332,7 +410,9 @@ function FormularioProyecto({ proyecto, opciones, ordenSugerido, onCerrar, onGua
                         freeSolo
                         options={opciones.clientes}
                         inputValue={campos.cliente}
-                        onInputChange={(evento, valor) => cambiar("cliente", valor)}
+                        onInputChange={(evento, valor) =>
+                            cambiar("cliente", valor)
+                        }
                         renderInput={(params) => (
                             <TextField
                                 {...params}
@@ -349,7 +429,9 @@ function FormularioProyecto({ proyecto, opciones, ordenSugerido, onCerrar, onGua
                         filterSelectedOptions
                         options={opciones.tecnologias}
                         value={campos.tecnologias}
-                        onChange={(evento, valor) => cambiar("tecnologias", valor)}
+                        onChange={(evento, valor) =>
+                            cambiar("tecnologias", valor)
+                        }
                         renderInput={(params) => (
                             <TextField
                                 {...params}
@@ -383,11 +465,13 @@ function FormularioProyecto({ proyecto, opciones, ordenSugerido, onCerrar, onGua
                             onChange={(e) => cambiar("estado", e.target.value)}
                             fullWidth
                         >
-                            {Object.entries(ESTADOS).map(([valor, { etiqueta }]) => (
-                                <MenuItem key={valor} value={valor}>
-                                    {etiqueta}
-                                </MenuItem>
-                            ))}
+                            {Object.entries(ESTADOS).map(
+                                ([valor, { etiqueta }]) => (
+                                    <MenuItem key={valor} value={valor}>
+                                        {etiqueta}
+                                    </MenuItem>
+                                ),
+                            )}
                         </TextField>
                     </Stack>
 
@@ -396,7 +480,9 @@ function FormularioProyecto({ proyecto, opciones, ordenSugerido, onCerrar, onGua
                             control={
                                 <Switch
                                     checked={campos.publicado}
-                                    onChange={(e) => cambiar("publicado", e.target.checked)}
+                                    onChange={(e) =>
+                                        cambiar("publicado", e.target.checked)
+                                    }
                                 />
                             }
                             label="Publicado en el sitio"
@@ -406,7 +492,12 @@ function FormularioProyecto({ proyecto, opciones, ordenSugerido, onCerrar, onGua
                             control={
                                 <Switch
                                     checked={campos.mostrar_iframe}
-                                    onChange={(e) => cambiar("mostrar_iframe", e.target.checked)}
+                                    onChange={(e) =>
+                                        cambiar(
+                                            "mostrar_iframe",
+                                            e.target.checked,
+                                        )
+                                    }
                                 />
                             }
                             label="Mostrar vista previa en vivo (usa la dirección)"
@@ -416,7 +507,9 @@ function FormularioProyecto({ proyecto, opciones, ordenSugerido, onCerrar, onGua
                             control={
                                 <Switch
                                     checked={campos.destacado}
-                                    onChange={(e) => cambiar("destacado", e.target.checked)}
+                                    onChange={(e) =>
+                                        cambiar("destacado", e.target.checked)
+                                    }
                                 />
                             }
                             label="Destacado"
@@ -429,7 +522,11 @@ function FormularioProyecto({ proyecto, opciones, ordenSugerido, onCerrar, onGua
                 <Button onClick={onCerrar} disabled={guardando}>
                     Cancelar
                 </Button>
-                <Button variant="contained" onClick={guardar} disabled={guardando}>
+                <Button
+                    variant="contained"
+                    onClick={guardar}
+                    disabled={guardando}
+                >
                     {guardando ? "Guardando..." : "Guardar"}
                 </Button>
             </DialogActions>
@@ -446,7 +543,9 @@ function ConfirmarEliminar({ proyecto, onCancelar, onEliminado }) {
         setEliminando(true);
         setError("");
         try {
-            await peticionAdmin(`/admin/proyectos/${proyecto.id}`, { method: "DELETE" });
+            await peticionAdmin(`/admin/proyectos/${proyecto.id}`, {
+                method: "DELETE",
+            });
             onEliminado();
         } catch (e) {
             setError(e.message);
@@ -455,8 +554,15 @@ function ConfirmarEliminar({ proyecto, onCancelar, onEliminado }) {
     }
 
     return (
-        <Dialog open onClose={eliminando ? undefined : onCancelar} maxWidth="xs" fullWidth>
-            <DialogTitle sx={{ fontWeight: 700 }}>¿Eliminar {proyecto.nombre}?</DialogTitle>
+        <Dialog
+            open
+            onClose={eliminando ? undefined : onCancelar}
+            maxWidth="xs"
+            fullWidth
+        >
+            <DialogTitle sx={{ fontWeight: 700 }}>
+                ¿Eliminar {proyecto.nombre}?
+            </DialogTitle>
             <DialogContent>
                 {error && (
                     <Alert severity="error" sx={{ mb: 2 }}>
@@ -464,15 +570,21 @@ function ConfirmarEliminar({ proyecto, onCancelar, onEliminado }) {
                     </Alert>
                 )}
                 <Typography color="text.secondary">
-                    Se quitará del sitio y se borrará su imagen. Esta acción no se puede deshacer. Si solo
-                    quieres dejar de mostrarlo, edítalo y apaga "Publicado en el sitio".
+                    Se quitará del sitio y se borrará su imagen. Esta acción no
+                    se puede deshacer. Si solo quieres dejar de mostrarlo,
+                    edítalo y apaga "Publicado en el sitio".
                 </Typography>
             </DialogContent>
             <DialogActions sx={{ px: 3, pb: 2 }}>
                 <Button onClick={onCancelar} disabled={eliminando}>
                     Cancelar
                 </Button>
-                <Button color="error" variant="contained" onClick={eliminar} disabled={eliminando}>
+                <Button
+                    color="error"
+                    variant="contained"
+                    onClick={eliminar}
+                    disabled={eliminando}
+                >
                     {eliminando ? "Eliminando..." : "Eliminar"}
                 </Button>
             </DialogActions>
@@ -483,7 +595,12 @@ function ConfirmarEliminar({ proyecto, onCancelar, onEliminado }) {
 /* ---------- Página ---------- */
 export default function ProyectosAdmin() {
     const [lista, setLista] = useState([]);
-    const [opciones, setOpciones] = useState({ servicios: [], clientes: [], tecnologias: [] });
+    const [opciones, setOpciones] = useState({
+        servicios: [],
+        categorias: [],
+        clientes: [],
+        tecnologias: [],
+    });
     const [cargando, setCargando] = useState(true);
     const [error, setError] = useState("");
     const [editando, setEditando] = useState(null); // null = cerrado, {} = nuevo, proyecto = editar
@@ -527,11 +644,15 @@ export default function ProyectosAdmin() {
                 }}
             >
                 <Box>
-                    <Typography variant="h4" sx={{ fontWeight: 700, fontSize: { xs: 24, md: 32 } }}>
+                    <Typography
+                        variant="h4"
+                        sx={{ fontWeight: 700, fontSize: { xs: 24, md: 32 } }}
+                    >
                         Proyectos
                     </Typography>
                     <Typography color="text.secondary" sx={{ mt: 0.5 }}>
-                        Los proyectos que se muestran en el portafolio del sitio.
+                        Los proyectos que se muestran en el portafolio del
+                        sitio.
                     </Typography>
                 </Box>
                 <Button
@@ -560,8 +681,13 @@ export default function ProyectosAdmin() {
                 )}
 
                 {!cargando && !error && lista.length === 0 && (
-                    <Typography color="text.secondary" align="center" sx={{ p: 4 }}>
-                        Aún no hay proyectos. Crea el primero con el botón "Nuevo proyecto".
+                    <Typography
+                        color="text.secondary"
+                        align="center"
+                        sx={{ p: 4 }}
+                    >
+                        Aún no hay proyectos. Crea el primero con el botón
+                        "Nuevo proyecto".
                     </Typography>
                 )}
 
@@ -603,8 +729,16 @@ export default function ProyectosAdmin() {
                 />
             )}
 
-            <Snackbar open={Boolean(aviso)} autoHideDuration={3500} onClose={() => setAviso("")}>
-                <Alert severity="success" variant="filled" onClose={() => setAviso("")}>
+            <Snackbar
+                open={Boolean(aviso)}
+                autoHideDuration={3500}
+                onClose={() => setAviso("")}
+            >
+                <Alert
+                    severity="success"
+                    variant="filled"
+                    onClose={() => setAviso("")}
+                >
                     {aviso}
                 </Alert>
             </Snackbar>

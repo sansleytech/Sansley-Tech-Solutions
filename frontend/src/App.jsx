@@ -3,6 +3,7 @@ import Sitio from "./pages/Sitio.jsx";
 import Login from "./pages/admin/Login.jsx";
 import Resumen from "./pages/admin/Resumen.jsx";
 import ProyectosAdmin from "./pages/admin/ProyectosAdmin.jsx";
+import CategoriasAdmin from "./pages/admin/CategoriasAdmin.jsx";
 import EquipoAdmin from "./pages/admin/EquipoAdmin.jsx";
 import ServiciosAdmin from "./pages/admin/ServiciosAdmin.jsx";
 import EmpresaAdmin from "./pages/admin/EmpresaAdmin.jsx";
@@ -22,6 +23,7 @@ export default function App() {
         <Route path="/admin" element={<LayoutAdmin />}>
           <Route index element={<Resumen />} />
           <Route path="proyectos" element={<ProyectosAdmin />} />
+          <Route path="categorias" element={<CategoriasAdmin />} />
           <Route path="equipo" element={<EquipoAdmin />} />
           <Route path="servicios" element={<ServiciosAdmin />} />
           <Route path="empresa" element={<EmpresaAdmin />} />

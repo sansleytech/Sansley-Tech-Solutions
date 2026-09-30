@@ -8,15 +8,17 @@ router.get("/", async (req, res) => {
     SELECT p.id, p.nombre, p.descripcion_corta, p.descripcion, p.imagen, p.url,
     p.mostrar_iframe, p.destacado, p.estado,
     s.nombre AS servicio,
+    cat.nombre AS categoria,
     c.nombre AS cliente,
     GROUP_CONCAT(t.nombre ORDER BY t.nombre SEPARATOR ',') AS tecnologias
     FROM proyectos p
     JOIN servicios s ON s.id = p.servicio_id
+    LEFT JOIN categorias cat ON cat.id = p.categoria_id
     LEFT JOIN clientes c ON c.id = p.cliente_id
     LEFT JOIN proyecto_tecnologia pt ON pt.proyecto_id = p.id
     LEFT JOIN tecnologias t ON t.id = pt.tecnologia_id
     WHERE p.publicado = TRUE
-    GROUP BY p.id, s.nombre, c.nombre
+    GROUP BY p.id, s.nombre, cat.nombre, c.nombre
     ORDER BY p.orden
   `);
 

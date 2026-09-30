@@ -13,6 +13,7 @@ import adminProyectos from './rutas/adminProyectos.js'
 import adminMensajes from './rutas/adminMensajes.js'
 import adminEmpresa from './rutas/adminEmpresa.js'
 import adminServicios from './rutas/adminServicios.js'
+import adminCategorias from './rutas/adminCategorias.js'
 import adminResumen from './rutas/adminResumen.js'
 import { RAIZ_UPLOADS } from './subirImagen.js'
 
@@ -52,6 +53,7 @@ app.use('/api/admin/resumen', adminResumen)
 app.use('/api/admin/equipo', adminEquipo)
 app.use('/api/admin/proyectos', adminProyectos)
 app.use('/api/admin/servicios', adminServicios)
+app.use('/api/admin/categorias', adminCategorias)
 app.use('/api/admin/empresa', adminEmpresa)
 app.use('/api/admin/mensajes', adminMensajes)
 
