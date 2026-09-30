@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link as RouterLink } from "react-router-dom";
 import { motion, useMotionValueEvent, useScroll } from "motion/react";
-import { Box, Button, Container, Drawer, IconButton, Tooltip } from "@mui/material";
+import { Box, Button, Container, Drawer, IconButton } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import CloseIcon from "@mui/icons-material/Close";
 import ArrowOutwardIcon from "@mui/icons-material/ArrowOutward";
@@ -21,14 +21,16 @@ function useSeccionActiva() {
     const [activa, setActiva] = useState("inicio");
 
     useEffect(() => {
-        const elementos = IDS.map((id) => document.getElementById(id)).filter(Boolean);
+        const elementos = IDS.map((id) => document.getElementById(id)).filter(
+            Boolean,
+        );
         const observador = new IntersectionObserver(
             (entradas) => {
                 entradas.forEach((entrada) => {
                     if (entrada.isIntersecting) setActiva(entrada.target.id);
                 });
             },
-            { rootMargin: "-45% 0px -50% 0px" }
+            { rootMargin: "-45% 0px -50% 0px" },
         );
         elementos.forEach((elemento) => observador.observe(elemento));
         return () => observador.disconnect();
@@ -47,6 +49,19 @@ const estiloBotonCotizar = {
         boxShadow: "0 0 40px rgba(59,155,255,.75)",
         transform: "translateY(-2px)",
     },
+};
+
+// Botón de acceso al panel administrativo, en texto (no solo ícono)
+const estiloBotonAdmin = {
+    ml: 0.5,
+    px: 1.75,
+    py: 1,
+    borderRadius: 999,
+    fontSize: 14.5,
+    fontWeight: 500,
+    textTransform: "none",
+    color: "rgba(255,255,255,.7)",
+    "&:hover": { color: "#fff", bgcolor: "rgba(255,255,255,.06)" },
 };
 
 export default function Navbar() {
@@ -76,7 +91,8 @@ export default function Navbar() {
                 borderBottom: "1px solid",
                 borderColor: conFondo ? "rgba(255,255,255,.08)" : "transparent",
                 boxShadow: conFondo ? "0 8px 32px rgba(0,0,0,.25)" : "none",
-                transition: "background-color .3s, border-color .3s, box-shadow .3s",
+                transition:
+                    "background-color .3s, border-color .3s, box-shadow .3s",
             }}
         >
             <Container maxWidth="lg">
@@ -94,7 +110,11 @@ export default function Navbar() {
                     {/* Escritorio */}
                     <Box
                         component="nav"
-                        sx={{ display: { xs: "none", md: "flex" }, alignItems: "center", gap: 0.5 }}
+                        sx={{
+                            display: { xs: "none", md: "flex" },
+                            alignItems: "center",
+                            gap: 0.5,
+                        }}
                     >
                         {enlaces.map((enlace) => {
                             const esActivo = activa === enlace.destino.slice(1);
@@ -111,7 +131,9 @@ export default function Navbar() {
                                         fontSize: 14.5,
                                         fontWeight: 500,
                                         textDecoration: "none",
-                                        color: esActivo ? "#fff" : "rgba(255,255,255,.7)",
+                                        color: esActivo
+                                            ? "#fff"
+                                            : "rgba(255,255,255,.7)",
                                         transition: "color .2s",
                                         "&:hover": { color: "#fff" },
                                     }}
@@ -119,44 +141,50 @@ export default function Navbar() {
                                     {esActivo && (
                                         <motion.span
                                             layoutId="seccion-activa"
-                                            transition={{ type: "spring", stiffness: 500, damping: 34 }}
+                                            transition={{
+                                                type: "spring",
+                                                stiffness: 500,
+                                                damping: 34,
+                                            }}
                                             style={{
                                                 position: "absolute",
                                                 inset: 0,
                                                 borderRadius: 999,
-                                                background: "rgba(59,155,255,.16)",
+                                                background:
+                                                    "rgba(59,155,255,.16)",
                                                 border: "1px solid rgba(59,155,255,.4)",
                                             }}
                                         />
                                     )}
-                                    <Box component="span" sx={{ position: "relative" }}>
+                                    <Box
+                                        component="span"
+                                        sx={{ position: "relative" }}
+                                    >
                                         {enlace.texto}
                                     </Box>
                                 </Box>
                             );
                         })}
 
-                        {/* Acceso discreto al panel administrativo */}
-                        <Tooltip title="Acceso administrativo">
-                            <IconButton
-                                component={RouterLink}
-                                to="/admin/login"
-                                aria-label="Ingresar al panel administrativo"
-                                sx={{
-                                    ml: 0.5,
-                                    color: "rgba(255,255,255,.55)",
-                                    "&:hover": { color: "#fff" },
-                                }}
-                            >
-                                <LockOutlinedIcon fontSize="small" />
-                            </IconButton>
-                        </Tooltip>
+                        {/* Acceso discreto al panel administrativo, en texto (no solo ícono) */}
+                        <Button
+                            component={RouterLink}
+                            to="/admin/login"
+                            startIcon={<LockOutlinedIcon fontSize="small" />}
+                            aria-label="Ingresar al panel administrativo"
+                            sx={estiloBotonAdmin}
+                        >
+                            Iniciar sesión
+                        </Button>
                     </Box>
 
                     <Button
                         href="#contacto"
                         endIcon={<ArrowOutwardIcon />}
-                        sx={{ display: { xs: "none", md: "inline-flex" }, ...estiloBotonCotizar }}
+                        sx={{
+                            display: { xs: "none", md: "inline-flex" },
+                            ...estiloBotonCotizar,
+                        }}
                     >
                         Cotiza tu proyecto
                     </Button>
@@ -236,7 +264,11 @@ export default function Navbar() {
                                 onClick={cerrar}
                                 initial={{ opacity: 0, x: 32 }}
                                 animate={{ opacity: 1, x: 0 }}
-                                transition={{ duration: 0.35, delay: 0.05 + i * 0.05, ease: SUAVE }}
+                                transition={{
+                                    duration: 0.35,
+                                    delay: 0.05 + i * 0.05,
+                                    ease: SUAVE,
+                                }}
                                 sx={{
                                     display: "flex",
                                     alignItems: "baseline",
@@ -244,8 +276,10 @@ export default function Navbar() {
                                     py: 1.75,
                                     color: "#fff",
                                     textDecoration: "none",
-                                    borderBottom: "1px solid rgba(255,255,255,.1)",
-                                    fontFamily: '"Poppins", "Helvetica", "Arial", sans-serif',
+                                    borderBottom:
+                                        "1px solid rgba(255,255,255,.1)",
+                                    fontFamily:
+                                        '"Poppins", "Helvetica", "Arial", sans-serif',
                                     fontWeight: 700,
                                     fontSize: 30,
                                     "&:active": { color: "cielo.light" },
@@ -253,7 +287,13 @@ export default function Navbar() {
                             >
                                 <Box
                                     component="span"
-                                    sx={{ minWidth: 26, fontSize: 13, fontWeight: 600, color: "lima.main", letterSpacing: ".1em" }}
+                                    sx={{
+                                        minWidth: 26,
+                                        fontSize: 13,
+                                        fontWeight: 600,
+                                        color: "lima.main",
+                                        letterSpacing: ".1em",
+                                    }}
                                 >
                                     {String(i + 1).padStart(2, "0")}
                                 </Box>
@@ -282,11 +322,15 @@ export default function Navbar() {
                         sx={{
                             mt: 1.5,
                             py: 1,
+                            textTransform: "none",
                             color: "rgba(255,255,255,.55)",
-                            "&:hover": { color: "#fff", bgcolor: "rgba(255,255,255,.06)" },
+                            "&:hover": {
+                                color: "#fff",
+                                bgcolor: "rgba(255,255,255,.06)",
+                            },
                         }}
                     >
-                        Acceso administrativo
+                        Iniciar sesión
                     </Button>
                 </Box>
             </Drawer>
