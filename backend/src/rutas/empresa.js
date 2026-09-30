@@ -5,7 +5,7 @@ const router = Router();
 
 router.get("/", async (req, res) => {
     const [empresas] = await db.query(
-        "SELECT nombre, eslogan, descripcion, mision, vision, alcance, correo, whatsapp, ubicacion, instagram, facebook, linkedin, tiktok FROM empresa LIMIT 1",
+        "SELECT nombre, eslogan, descripcion, mision, vision, alcance, correo, whatsapp, ubicacion FROM empresa LIMIT 1",
     );
 
     if (empresas.length === 0) {

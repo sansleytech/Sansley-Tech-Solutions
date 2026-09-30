@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
 import { Link as RouterLink } from "react-router-dom";
 import { motion, useMotionValueEvent, useScroll } from "motion/react";
-import { Box, Button, Container, Drawer, IconButton } from "@mui/material";
+import { Box, Button, Container, Drawer, IconButton, Tooltip } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import CloseIcon from "@mui/icons-material/Close";
 import ArrowOutwardIcon from "@mui/icons-material/ArrowOutward";
-import LoginOutlinedIcon from "@mui/icons-material/LoginOutlined";
+import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Marca from "./Marca.jsx";
 import { enlaces } from "../datosSitio.js";
 import { brilloAzul, degradadoMarca } from "../tema.js";
@@ -137,22 +137,20 @@ export default function Navbar() {
                         })}
 
                         {/* Acceso discreto al panel administrativo */}
-                        <Button
-                            component={RouterLink}
-                            to="/admin/login"
-                            startIcon={<LoginOutlinedIcon fontSize="small" />}
-                            sx={{
-                                ml: 0.5,
-                                px: 1.75,
-                                borderRadius: 999,
-                                fontSize: 14.5,
-                                fontWeight: 500,
-                                color: "rgba(255,255,255,.7)",
-                                "&:hover": { color: "#fff", bgcolor: "rgba(255,255,255,.06)" },
-                            }}
-                        >
-                            Iniciar sesión
-                        </Button>
+                        <Tooltip title="Acceso administrativo">
+                            <IconButton
+                                component={RouterLink}
+                                to="/admin/login"
+                                aria-label="Ingresar al panel administrativo"
+                                sx={{
+                                    ml: 0.5,
+                                    color: "rgba(255,255,255,.55)",
+                                    "&:hover": { color: "#fff" },
+                                }}
+                            >
+                                <LockOutlinedIcon fontSize="small" />
+                            </IconButton>
+                        </Tooltip>
                     </Box>
 
                     <Button
@@ -280,7 +278,7 @@ export default function Navbar() {
                         to="/admin/login"
                         onClick={cerrar}
                         fullWidth
-                        startIcon={<LoginOutlinedIcon fontSize="small" />}
+                        startIcon={<LockOutlinedIcon fontSize="small" />}
                         sx={{
                             mt: 1.5,
                             py: 1,
@@ -288,7 +286,7 @@ export default function Navbar() {
                             "&:hover": { color: "#fff", bgcolor: "rgba(255,255,255,.06)" },
                         }}
                     >
-                        Iniciar sesión
+                        Acceso administrativo
                     </Button>
                 </Box>
             </Drawer>

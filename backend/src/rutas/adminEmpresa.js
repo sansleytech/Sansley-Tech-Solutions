@@ -12,16 +12,13 @@ const texto = (valor) => (typeof valor === "string" ? valor.trim() : "");
 // Igual, pero si queda vacío lo guarda como NULL en la base de datos
 const textoOpcional = (valor) => texto(valor) || null;
 
-// Campos de redes sociales que se repiten en empresa y en equipo
-const CAMPOS_REDES = ["instagram", "facebook", "linkedin", "tiktok"];
-
 // Toma solo los campos que nos interesan del cuerpo de la petición
 function leerEmpresa(cuerpo) {
     // Dejamos solo dígitos; si escribe 10 (celular colombiano) le ponemos el 57
     let whatsapp = texto(cuerpo.whatsapp).replace(/\D/g, "");
     if (whatsapp.length === 10) whatsapp = "57" + whatsapp;
 
-    const datos = {
+    return {
         nombre: texto(cuerpo.nombre),
         eslogan: textoOpcional(cuerpo.eslogan),
         descripcion: textoOpcional(cuerpo.descripcion),
@@ -32,12 +29,6 @@ function leerEmpresa(cuerpo) {
         whatsapp: whatsapp || null,
         ubicacion: textoOpcional(cuerpo.ubicacion),
     };
-
-    for (const campo of CAMPOS_REDES) {
-        datos[campo] = textoOpcional(cuerpo[campo]);
-    }
-
-    return datos;
 }
 
 // Devuelve el mensaje de error si algo está mal, o null si todo está bien
@@ -59,10 +50,6 @@ function errorDeEmpresa(d) {
     for (const campo of ["descripcion", "mision", "vision", "alcance"]) {
         if (d[campo] && d[campo].length > 3000)
             return `El campo ${campo} no puede pasar de 3000 caracteres`;
-    }
-    for (const campo of CAMPOS_REDES) {
-        if (d[campo] && d[campo].length > 255)
-            return `El enlace de ${campo} no puede pasar de 255 caracteres`;
     }
     return null;
 }
@@ -96,23 +83,18 @@ router.put("/", async (req, res) => {
         datos.correo,
         datos.whatsapp,
         datos.ubicacion,
-        datos.instagram,
-        datos.facebook,
-        datos.linkedin,
-        datos.tiktok,
     ];
 
     if (existentes.length === 0) {
         await db.execute(
-            `INSERT INTO empresa (nombre, eslogan, descripcion, mision, vision, alcance, correo, whatsapp, ubicacion, instagram, facebook, linkedin, tiktok)
-             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+            `INSERT INTO empresa (nombre, eslogan, descripcion, mision, vision, alcance, correo, whatsapp, ubicacion)
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
             valores,
         );
     } else {
         await db.execute(
             `UPDATE empresa SET nombre = ?, eslogan = ?, descripcion = ?, mision = ?, vision = ?,
-                    alcance = ?, correo = ?, whatsapp = ?, ubicacion = ?,
-                    instagram = ?, facebook = ?, linkedin = ?, tiktok = ?
+                    alcance = ?, correo = ?, whatsapp = ?, ubicacion = ?
              WHERE id = ?`,
             [...valores, existentes[0].id],
         );
